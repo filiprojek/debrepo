@@ -25,7 +25,7 @@ Lorem, Ipsum, Dolor
 - Todo
 
 ## How to use
-```md
+```
 USAGE:
         debrepo [OPTIONS] [DEB]
 
