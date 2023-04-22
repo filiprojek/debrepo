@@ -1,0 +1,56 @@
+#!/bin/sh
+VERSION="1.0.0"
+DIR="$(cd "$(dirname "$0")" && pwd)"
+
+if [ "$1" = "init" ] || [ "$1" = "-i" ] || [ "$1" = "--init" ]; then
+	$DIR/scripts/repoinit.sh && echo "debrepo: repository folders have been successfully created"
+	exit
+fi
+
+if [ "$1" = "add" ] || [ "$1" = "-a" ] || [ "$1" = "--add" ]; then
+	echo "add"
+	$DEBPATH=""
+	exit
+fi
+
+if [ "$1" = "del" ] || [ "$1" = "-d" ] || [ "$1" = "--del" ]; then
+	echo "del"
+	$DEBNAME=""
+	exit
+fi
+
+if [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
+	echo "debrepo $VERSION"
+	exit
+fi
+
+#if [ "$1" = "help" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+if [ 1 ]; then
+	HELPMESSAGE="
+debrepo $VERSION
+A Debian repository management tool.
+
+USAGE:
+	debrepo [OPTIONS] [DEB]
+
+OPTIONS:
+	init, -i, --init
+		create repository folder structure
+	add, -a, --add
+		add deb package to repository
+	del, -d, --del
+		delete deb package from repository
+	help, -h, --help
+		print help message
+	-v, --version
+		print version of debrepo package
+
+ARGS:
+	<DEB>...
+		*.deb package to add or delete from repository.
+
+"
+
+	printf "%s\n" "$HELPMESSAGE"
+fi
+
