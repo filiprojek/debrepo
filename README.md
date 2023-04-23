@@ -16,7 +16,7 @@ __Warning! This software is still under development and is not intended for stab
 `Debrepo` is a software tool designed for creating and managing Debian repositories for `*.deb` packages, providing a lightweight and user-friendly alternative to more complex tools like `reprepo` or `aptly`. While these alternatives may offer more advanced features, Debrepo focuses on providing essential functionality and ease of use for repository management, allowing users to easily add, remove, and update packages within their repositories. With Debrepo, users can efficiently manage their Debian repositories without the unnecessary complexity of more advanced tools.
 
 ## Dependencies
-- `sh`, `dpkg`, `gpg`, `python3`
+`sh` `dpkg` `gpg` `python3`
 
 ## Installation
 ### from deb package
