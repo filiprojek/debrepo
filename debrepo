@@ -8,14 +8,26 @@ if [ "$1" = "init" ] || [ "$1" = "-i" ] || [ "$1" = "--init" ]; then
 fi
 
 if [ "$1" = "add" ] || [ "$1" = "-a" ] || [ "$1" = "--add" ]; then
-	echo "add"
-	$DEBPATH=""
+	# copy deb file to repo folder structure
+	cp "./$2" "./apt-repo/pool/main/"
+	# generate package and release file
+	$DIR/scripts/addPackage.sh $2 && echo "debrepo: package $2 was successfully added"
 	exit
 fi
 
 if [ "$1" = "del" ] || [ "$1" = "-d" ] || [ "$1" = "--del" ]; then
-	echo "del"
-	$DEBNAME=""
+	rm -i "./apt-repo/pool/main/$2" && echo "debrepo: package $2 was successfully removed"
+	exit
+fi
+
+if [ "$1" = "list" ] || [ "$1" = "-l" ] || [ "$1" = "--list" ]; then
+	echo "debrepo: list of packages"
+	ls -l "./apt-repo/pool/main/"
+	exit
+fi
+
+if [ "$1" = "serve" ] || [ "$1" = "-s" ] ||[ "$1" = "--serve" ]; then 
+	python3 -m http.server
 	exit
 fi
 
@@ -40,6 +52,8 @@ OPTIONS:
 		add deb package to repository
 	del, -d, --del
 		delete deb package from repository
+	serve, -s, --serve
+		serve repository using python built in http module
 	help, -h, --help
 		print help message
 	-v, --version
