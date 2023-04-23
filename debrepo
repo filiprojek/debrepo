@@ -11,12 +11,14 @@ if [ "$1" = "add" ] || [ "$1" = "-a" ] || [ "$1" = "--add" ]; then
 	# copy deb file to repo folder structure
 	cp "./$2" "./apt-repo/pool/main/"
 	# generate package and release file
-	$DIR/scripts/addPackage.sh $2 && echo "debrepo: package $2 was successfully added"
+	$DIR/scripts/genPkgRel.sh $2 && echo "debrepo: package $2 was successfully added"
 	exit
 fi
 
 if [ "$1" = "del" ] || [ "$1" = "-d" ] || [ "$1" = "--del" ]; then
 	rm -i "./apt-repo/pool/main/$2" && echo "debrepo: package $2 was successfully removed"
+	# generate package and release file
+	$DIR/scripts/genPkgRel.sh $2 && echo "debrepo: repository  was successfully updated"
 	exit
 fi
 
