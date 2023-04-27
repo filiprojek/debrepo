@@ -28,7 +28,12 @@ if [ "$1" = "list" ] || [ "$1" = "-l" ] || [ "$1" = "--list" ]; then
 	exit
 fi
 
-if [ "$1" = "serve" ] || [ "$1" = "-s" ] ||[ "$1" = "--serve" ]; then 
+if [ "$1" = "sign" ] || [ "$1" = "-s" ] || [ "$1" = "--sign" ]; then
+	$DIR/scripts/gpgSign.sh $2
+	exit
+fi
+
+if [ "$1" = "serve" ] || [ "$1" = "-S" ] ||[ "$1" = "--serve" ]; then 
 	python3 -m http.server
 	exit
 fi
