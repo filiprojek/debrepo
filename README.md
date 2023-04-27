@@ -10,7 +10,7 @@ __Warning! This software is still under development and is not intended for stab
 - [x] create del feature
 - [ ] multiple repositories feature
 - [ ] multiple archs feature
-- [ ] signing repositories using GPG
+- [x] signing repositories using GPG
 - [ ] make simple way to edit repository info in release file
 
 ## About
