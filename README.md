@@ -9,6 +9,7 @@ __Warning! This software is still under development and is not intended for stab
 - [x] finish add feature
 - [x] create del feature
 - [ ] multiple repositories feature
+- [ ] multiple archs feature
 - [ ] signing repositories using GPG
 - [ ] make simple way to edit repository info in release file
 
@@ -37,6 +38,8 @@ OPTIONS:
 		add deb package to repository
 	del, -d, --del
 		delete deb package from repository
+	list, -l, --list
+		list deb packages
 	serve, -s, --serve
 		serve repository using python built in http module
 	help, -h, --help

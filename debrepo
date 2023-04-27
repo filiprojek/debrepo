@@ -54,6 +54,8 @@ OPTIONS:
 		add deb package to repository
 	del, -d, --del
 		delete deb package from repository
+	list, -l, --list
+		list deb packages
 	serve, -s, --serve
 		serve repository using python built in http module
 	help, -h, --help
