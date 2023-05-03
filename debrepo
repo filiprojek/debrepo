@@ -34,8 +34,9 @@ if [ "$1" = "add" ] || [ "$1" = "-a" ] || [ "$1" = "--add" ]; then
 	# copy deb file to repo folder structure
 	if [ "$2" = "--letter-based-structure" ] || [ "$2" = "-l" ];then
 		first_letter=$(echo "$3" | sed 's/[.\/]//g' | cut -c 1 | tr '[:upper:]' '[:lower:]')
-		mkdir "$REPODIR/apt-repo/pool/main/$first_letter/"
-		cp "./$3" "$REPODIR/apt-repo/pool/main/$first_letter/$3"
+		pkg_name=$(echo "$3" | awk -F "_" '{print $1}')
+		mkdir -p "$REPODIR/apt-repo/pool/main/$first_letter/$pkg_name/"
+		cp "./$3" "$REPODIR/apt-repo/pool/main/$first_letter/$pkg_name/$3"
 	else
 		cp "./$2" "$REPODIR/apt-repo/pool/main/"
 	fi
@@ -48,10 +49,11 @@ fi
 
 if [ "$1" = "del" ] || [ "$1" = "-d" ] || [ "$1" = "--del" ]; then
 		first_letter=$(echo "$2" | sed 's/[.\/]//g' | cut -c 1 | tr '[:upper:]' '[:lower:]')
+		pkg_name=$(echo "$2" | awk -F "_" '{print $1}')
 
-	if [ -f "$REPODIR/apt-repo/pool/main/$first_letter/$2" ]; then
+	if [ -f "$REPODIR/apt-repo/pool/main/$first_letter/$pkg_name/$2" ]; then
 		# remove package
-		rm -i "$REPODIR/apt-repo/pool/main/$first_letter/$2" && echo "debrepo: package $2 was successfully removed"
+		rm -i "$REPODIR/apt-repo/pool/main/$first_letter/$pkg_name/$2" && echo "debrepo: package $2 was successfully removed"
 	elif [ -f "$REPODIR/apt-repo/pool/main/$2" ]; then
 		# remove package
 		rm -i "$REPODIR/apt-repo/pool/main/$2" && echo "debrepo: package $2 was successfully removed"
