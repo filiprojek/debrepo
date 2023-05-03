@@ -1,39 +1,95 @@
 #!/bin/sh
 VERSION="1.0.0"
-DIR="$(cd "$(dirname "$0")" && pwd)"
+DIR="$(cd "$(dirname "$0")" && pwd)" # location of debrepo source path
+
+# set vars
+index=1
+for arg in $@; do
+	# set REPODIR variable
+	if [ $arg = "--repodir" ]; then
+		ARGID="$((index+1))"
+		eval "REPODIR=\$$ARGID"
+	fi
+
+	if [ $arg = "--gpg" ]; then
+		ARGID="$((index+1))"
+		eval "GPG=\$$ARGID"
+	fi
+
+	index=$((index+1))
+done
+
+if [ -z $REPODIR ]; then
+	echo "error: --repodir is not set"
+	exit 1
+fi
 
 if [ "$1" = "init" ] || [ "$1" = "-i" ] || [ "$1" = "--init" ]; then
-	$DIR/scripts/repoinit.sh && echo "debrepo: repository folders have been successfully created"
+	# create basic folder structure
+	$DIR/scripts/repoinit.sh $REPODIR && echo "debrepo: repository folders have been successfully created"
 	exit
 fi
 
 if [ "$1" = "add" ] || [ "$1" = "-a" ] || [ "$1" = "--add" ]; then
 	# copy deb file to repo folder structure
-	cp "./$2" "./apt-repo/pool/main/"
+	if [ "$2" = "--letter-based-structure" ] || [ "$2" = "-l" ];then
+		first_letter=$(echo "$3" | sed 's/[.\/]//g' | cut -c 1 | tr '[:upper:]' '[:lower:]')
+		mkdir "$REPODIR/apt-repo/pool/main/$first_letter/"
+		cp "./$3" "$REPODIR/apt-repo/pool/main/$first_letter/$3"
+	else
+		cp "./$2" "$REPODIR/apt-repo/pool/main/"
+	fi
+
 	# generate package and release file
-	$DIR/scripts/genPkgRel.sh $2 && echo "debrepo: package $2 was successfully added"
+	$DIR/scripts/genPkgRel.sh $REPODIR $2 && echo "debrepo: package $2 was successfully added"
+	$DIR/scripts/gpgSign.sh $REPODIR $GPG && echo "debrepo: repo was succesfully signed"
 	exit
 fi
 
 if [ "$1" = "del" ] || [ "$1" = "-d" ] || [ "$1" = "--del" ]; then
-	rm -i "./apt-repo/pool/main/$2" && echo "debrepo: package $2 was successfully removed"
+		first_letter=$(echo "$2" | sed 's/[.\/]//g' | cut -c 1 | tr '[:upper:]' '[:lower:]')
+
+	if [ -f "$REPODIR/apt-repo/pool/main/$first_letter/$2" ]; then
+		# remove package
+		rm -i "$REPODIR/apt-repo/pool/main/$first_letter/$2" && echo "debrepo: package $2 was successfully removed"
+	elif [ -f "$REPODIR/apt-repo/pool/main/$2" ]; then
+		# remove package
+		rm -i "$REPODIR/apt-repo/pool/main/$2" && echo "debrepo: package $2 was successfully removed"
+	else
+		echo "error: package $2 was not found";
+		exit 1;
+	fi
+
 	# generate package and release file
-	$DIR/scripts/genPkgRel.sh $2 && echo "debrepo: repository  was successfully updated"
+	$DIR/scripts/genPkgRel.sh $REPODIR && echo "debrepo: repository  was successfully updated"
+	$DIR/scripts/gpgSign.sh $REPODIR && echo "debrepo: repo was succesfully signed"
 	exit
 fi
 
 if [ "$1" = "list" ] || [ "$1" = "-l" ] || [ "$1" = "--list" ]; then
 	echo "debrepo: list of packages"
-	ls -l "./apt-repo/pool/main/"
+
+	# if command tree is installed
+	if [ -e "$(which tree)" ]; then
+		tree "$REPODIR/apt-repo/pool/main/"
+	else
+		ls -R "$REPODIR/apt-repo/pool/main/"
+	fi
 	exit
 fi
 
 if [ "$1" = "sign" ] || [ "$1" = "-s" ] || [ "$1" = "--sign" ]; then
-	$DIR/scripts/gpgSign.sh $2
+	$DIR/scripts/gpgSign.sh $2 # $2 is optional value if GPG is set in config file
 	exit
 fi
 
-if [ "$1" = "serve" ] || [ "$1" = "-S" ] ||[ "$1" = "--serve" ]; then 
+if [ "$1" = "update" ] || [ "$1" = "-u" ] || [ "$1" = "--update" ]; then
+	$DIR/scripts/genPkgRel.sh && echo "debrepo: repo was successfully updated" $DIR/scripts/gpgSign.sh $3 && echo "debrepo: repo was succesfully signed" # $3 is optional value if GPG is set in config file
+	exit
+fi
+
+if [ "$1" = "serve" ] || [ "$1" = "-S" ] || [ "$1" = "--serve" ]; then 
+	echo "THIS SHOULD BE ONLY USED FOR TESTING!"
 	python3 -m http.server
 	exit
 fi

@@ -1,5 +1,6 @@
 #!/bin/sh
 set -e
+. ../../config # this file is in /apt-repo/config
 
 do_hash() {
     HASH_NAME=$1
@@ -11,20 +12,28 @@ do_hash() {
             continue
         fi
         echo " $(${HASH_CMD} ${f}  | cut -d" " -f1) $(wc -c $f)"
+pwd
     done
 }
 
+if [ ! -f "../../config" ]; then
+	echo "error - config file does not exists"
+	exit 1;
+fi
+
+
 cat << EOF
-Origin: Example Repository
-Label: Example
-Suite: stable
-Codename: stable
-Version: 1.0
-Architectures: amd64 arm64 arm7
-Components: main
-Description: An example software repository
+Origin: $ORIGIN
+Label: $LABEL
+Suite: $SUITE
+Codename: $CODENAME
+Version: $VERSION
+Architectures: $ARCHITECTURES
+Components: $COMPONENTS
+Description: $DESCRIPTION
 Date: $(date -Ru)
 EOF
+
 do_hash "MD5Sum" "md5sum"
 do_hash "SHA1" "sha1sum"
 do_hash "SHA256" "sha256sum"
