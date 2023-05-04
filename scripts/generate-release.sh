@@ -12,7 +12,6 @@ do_hash() {
             continue
         fi
         echo " $(${HASH_CMD} ${f}  | cut -d" " -f1) $(wc -c $f)"
-pwd
     done
 }
 

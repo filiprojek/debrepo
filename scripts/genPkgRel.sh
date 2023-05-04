@@ -6,7 +6,6 @@ ARCHS="$($LS -l $REPODIR/apt-repo/dists/stable/main/ | awk '{print $9}' | awk NF
 
 # generate Packages file
 for ARCH in $ARCHS; do
-	echo $ARCH
 	dpkg-scanpackages --multiversion --arch $ARCH "$REPODIR/apt-repo/pool/" > "$REPODIR/apt-repo/dists/stable/main/binary-$ARCH/Packages"
 	# compress Packages file
 	cat "$REPODIR/apt-repo/dists/stable/main/binary-$ARCH/Packages" | gzip -9 > "$REPODIR/apt-repo/dists/stable/main/binary-$ARCH/Packages.gz"
