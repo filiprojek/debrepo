@@ -2,6 +2,15 @@
 set -e
 . ../../config # this file is in /apt-repo/config
 
+if [ ! $DISTRO ]; then
+	DISTRO="stable"
+fi
+
+if [ ! -f "../../config" ]; then
+	echo "error - config file does not exists"
+	exit 1;
+fi
+
 do_hash() {
     HASH_NAME=$1
     HASH_CMD=$2
@@ -15,17 +24,11 @@ do_hash() {
     done
 }
 
-if [ ! -f "../../config" ]; then
-	echo "error - config file does not exists"
-	exit 1;
-fi
-
-
 cat << EOF
 Origin: $ORIGIN
 Label: $LABEL
 Suite: $SUITE
-Codename: $CODENAME
+Codename: $DISTRO
 Version: $VERSION
 Architectures: $ARCHITECTURES
 Components: $COMPONENTS

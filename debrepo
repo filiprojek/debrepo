@@ -5,7 +5,6 @@ DIR="$(cd "$(dirname "$0")" && pwd)" # location of debrepo source path
 # set vars
 index=1
 for arg in $@; do
-	# set REPODIR variable
 	if [ $arg = "--repodir" ]; then
 		ARGID="$((index+1))"
 		eval "REPODIR=\$$ARGID"
@@ -14,6 +13,11 @@ for arg in $@; do
 	if [ $arg = "--gpg" ]; then
 		ARGID="$((index+1))"
 		eval "GPG=\$$ARGID"
+	fi
+
+	if [ $arg = "--distro" ]; then
+		ARGID="$((index+1))"
+		eval "DISTRO=\$$ARGID"
 	fi
 
 	index=$((index+1))
@@ -31,6 +35,13 @@ if [ "$1" = "init" ] || [ "$1" = "-i" ] || [ "$1" = "--init" ]; then
 fi
 
 if [ "$1" = "add" ] || [ "$1" = "-a" ] || [ "$1" = "--add" ]; then
+	# if distro specific package
+	if [ "$DISTRO" ]; then
+		echo "distro: $DISTRO"
+
+		exit
+	fi
+	exit
 	# copy deb file to repo folder structure
 	if [ "$2" = "--letter-based-structure" ] || [ "$2" = "-l" ];then
 		first_letter=$(echo "$3" | sed 's/.*\///' | cut -c 1 | tr '[:upper:]' '[:lower:]')
@@ -42,8 +53,8 @@ if [ "$1" = "add" ] || [ "$1" = "-a" ] || [ "$1" = "--add" ]; then
 	fi
 
 	# generate package and release file
-	$DIR/scripts/genPkgRel.sh $REPODIR $2 && echo "debrepo: package $2 was successfully added"
-	$DIR/scripts/gpgSign.sh $REPODIR $GPG && echo "debrepo: repo was succesfully signed"
+	$DIR/scripts/genPkgRel.sh $REPODIR $2 $DISTRO  && echo "debrepo: package $2 was successfully added"
+	$DIR/scripts/gpgSign.sh $REPODIR $GPG $DISTRO && echo "debrepo: repo was succesfully signed"
 	exit
 fi
 
