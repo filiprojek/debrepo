@@ -1,6 +1,8 @@
 #!/bin/sh
 VERSION="0.1.0"
-DIR="$(cd "$(dirname "$0")" && pwd)" # location of debrepo source path
+#DIR="$(cd "$(dirname "$0")" && pwd)" # location of debrepo source path
+SCRIPT_PATH=$(readlink -f "$0")
+DIR=$(dirname "$SCRIPT_PATH")
 
 # set vars
 index=1

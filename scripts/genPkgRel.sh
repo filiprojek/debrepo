@@ -1,5 +1,7 @@
 #!/bin/sh
-DIR="$(cd "$(dirname "$0")" && pwd)"
+#DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_PATH=$(readlink -f "$0")
+DIR=$(dirname "$SCRIPT_PATH")
 LS="$(which ls)" # this prevents bugs when aliasing ls to tools like exa
 REPODIR="$1"
 ARCHS="$($LS -l $REPODIR/apt-repo/dists/stable/main/ | awk '{print $9}' | awk NF | awk -F - '{print $2}')"
