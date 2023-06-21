@@ -2,17 +2,6 @@
 
 A Debian repository management tool.
 
-## Development
-__Warning! This software is still under development and is not intended for stable use.__
-
-### Todo
-- [x] finish add feature
-- [x] create del feature
-- [ ] multiple repositories feature
-- [ ] multiple archs feature
-- [x] signing repositories using GPG
-- [ ] make simple way to edit repository info in release file
-
 ## About
 `Debrepo` is a software tool designed for creating and managing Debian repositories for `*.deb` packages, providing a lightweight and user-friendly alternative to more complex tools like `reprepo` or `aptly`. While these alternatives may offer more advanced features, Debrepo focuses on providing essential functionality and ease of use for repository management, allowing users to easily add, remove, and update packages within their repositories. With Debrepo, users can efficiently manage their Debian repositories without the unnecessary complexity of more advanced tools.
 
@@ -20,11 +9,13 @@ __Warning! This software is still under development and is not intended for stab
 `sh` `dpkg` `gpg` `python3`
 
 ## Installation
-### from deb package
-- Todo
-
 ### from source
-- Todo
+- clone this repository to some folder inside your file system
+- make symlink to `/bin/`
+- now you should be able to use `debrepo`
+
+### from deb package
+- *Todo*
 
 ## How to use
 ```
