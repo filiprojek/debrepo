@@ -48,10 +48,10 @@ if [ "$1" = "add" ] || [ "$1" = "-a" ] || [ "$1" = "--add" ]; then
 	else
 		# generate package file name and copy deb file
 		PKG=$2
-		PKG_ARCH=$(dpkg -i $PKG | grep "Architecture" | sed 's/ Architecture: //')
+		PKG_ARCH=$(dpkg -I $PKG | grep "Architecture" | sed 's/ Architecture: //')
 		PKG_VERSION=$(dpkg -I $PKG | grep "Version" | sed 's/ Version: //')
 		PKG_NAME=$(echo "$PKG" | sed 's/.*\///' | awk -F "_" '{print $1}')
-		PKG_FULLNAME="${$PKG_NAME}_${PKG_VERSION}_${PKG_ARCH}.deb"
+		PKG_FULLNAME="${PKG_NAME}_${PKG_VERSION}_${PKG_ARCH}.deb"
 
 		cp $PKG "$REPODIR/apt-repo/pool/main/$PKG_FULNAME"
 	fi
