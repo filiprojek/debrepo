@@ -135,8 +135,8 @@ Point `http://repo.example.com/` to the `apt-repo/` directory.
 Users can add your repository to their sources:
 
 ```bash
-# 1. Add the public key
-curl http://repo.example.com/dists/stable/Release.gpg | sudo apt-key add -
+# 1. Add the public key exported by the repository
+curl -fsSL http://repo.example.com/keys/public.key | sudo apt-key add -
 
 # 2. Add the source
 echo "deb http://repo.example.com/ stable main" | sudo tee /etc/apt/sources.list.d/my-repo.list
