@@ -5,23 +5,41 @@ SCRIPT_PATH=$(readlink -f "$0")
 DIR=$(dirname "$SCRIPT_PATH")
 
 # set vars
-index=1
-for arg in $@; do
-	# set REPODIR variable
-	if [ $arg = "--repodir" ]; then
-		ARGID="$((index+1))"
-		eval "REPODIR=\$$ARGID"
-	fi
-
-	if [ $arg = "--gpg" ]; then
-		ARGID="$((index+1))"
-		eval "GPG=\$$ARGID"
-	fi
-
-	index=$((index+1))
+# Parse global options (shift them so $1 becomes the command)
+while [ $# -gt 0 ]; do
+	case "$1" in
+		--repodir)
+			REPODIR="$2"
+			shift 2
+			;;
+		--repodir=*)
+			REPODIR="${1#*=}"
+			shift
+			;;
+		--gpg)
+			GPG="$2"
+			shift 2
+			;;
+		--gpg=*)
+			GPG="${1#*=}"
+			shift
+			;;
+		--)
+			shift
+			break
+			;;
+		-*)
+			# unknown option: stop parsing and let the rest be positional
+			break
+			;;
+		*)
+			# first non-option is the command
+			break
+			;;
+	esac
 done
 
-if [ -z $REPODIR ]; then
+if [ -z "$REPODIR" ]; then
 	echo "error: --repodir is not set"
 	exit 1
 fi
@@ -36,24 +54,24 @@ if [ "$1" = "add" ] || [ "$1" = "-a" ] || [ "$1" = "--add" ]; then
 	if [ "$2" = "--letter-based-structure" ] || [ "$2" = "-l" ]; then
 		# generate package file name and copy deb file
 		PKG=$3
-		PKG_ARCH=$(dpkg -I $PKG | grep "Architecture" | sed 's/ Architecture: //')
-		PKG_VERSION=$(dpkg -I $PKG | grep "Version" | sed 's/ Version: //')
+		PKG_ARCH=$(dpkg -I "$PKG" | grep "Architecture" | sed 's/ Architecture: //')
+		PKG_VERSION=$(dpkg -I "$PKG" | grep "Version" | sed 's/ Version: //')
 		PKG_NAME=$(echo "$PKG" | sed 's/.*\///' | awk -F "_" '{print $1}')
 		PKG_FULLNAME="${PKG_NAME}_${PKG_VERSION}_${PKG_ARCH}.deb"
 		FIRST_LETTER=$(echo "$PKG" | sed 's/.*\///' | cut -c 1 | tr '[:upper:]' '[:lower:]')
 		PKG_PATH="$REPODIR/apt-repo/pool/main/$FIRST_LETTER/$PKG_NAME/$PKG_FULLNAME"
 
 		mkdir -p "$REPODIR/apt-repo/pool/main/$FIRST_LETTER/$PKG_NAME/"
-		cp $PKG $PKG_PATH
+		cp "$PKG" "$PKG_PATH"
 	else
 		# generate package file name and copy deb file
 		PKG=$2
-		PKG_ARCH=$(dpkg -I $PKG | grep "Architecture" | sed 's/ Architecture: //')
-		PKG_VERSION=$(dpkg -I $PKG | grep "Version" | sed 's/ Version: //')
+		PKG_ARCH=$(dpkg -I "$PKG" | grep "Architecture" | sed 's/ Architecture: //')
+		PKG_VERSION=$(dpkg -I "$PKG" | grep "Version" | sed 's/ Version: //')
 		PKG_NAME=$(echo "$PKG" | sed 's/.*\///' | awk -F "_" '{print $1}')
 		PKG_FULLNAME="${PKG_NAME}_${PKG_VERSION}_${PKG_ARCH}.deb"
 
-		cp $PKG "$REPODIR/apt-repo/pool/main/$PKG_FULNAME"
+		cp "$PKG" "$REPODIR/apt-repo/pool/main/$PKG_FULLNAME"
 	fi
 
 	# generate package and release file
